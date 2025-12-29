@@ -8,18 +8,28 @@ export default function EmployeeDetails() {
     const [employee, setEmployee] = useState<Employee | null>(null);
 
     useEffect(() => {
-        const found = employees.find(emp => emp.id === id);
-        setEmployee(found || null);
+
+        (async () => {
+            try {
+                const res = await fetch(`http://localhost:5064/api/Employee/GetById/${id}`)
+                let temp=await res.json();
+                temp=temp.user[0]
+                temp={...temp}
+                setEmployee(temp);
+            } catch (e: any) {
+                console.log(e.message);
+            }
+        })();
     }, [id]);
 
     const exportPdf = () => {
         if (!employee) return;
         const doc = new jsPDF();
         doc.text(`Employee Details`, 10, 10);
-        doc.text(`Name: ${employee.name}`, 10, 20);
-        doc.text(`Email: ${employee.email}`, 10, 30);
-        doc.text(`Department: ${employee.department}`, 10, 40);
-        doc.text(`Salary: ${employee.salary}`, 10, 50);
+        doc.text(`Name: ${employee?.username}`, 10, 20);
+        doc.text(`Email: ${employee?.email}`, 10, 30);
+        doc.text(`Department: ${employee?.address}`, 10, 40);
+        doc.text(`Salary: ${employee?.age}`, 10, 50);
         doc.save("employee-details.pdf");
     };
 
@@ -41,14 +51,14 @@ export default function EmployeeDetails() {
             <div className="bg-gradient-to-r from-pink-50 to-amber-50 rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     <div className="h-16 w-16 rounded-full bg-pink-100 text-pink-700 flex items-center justify-center text-2xl font-semibold">
-                        {employee.name.charAt(0)}
+                        {employee?.username.charAt(0)}
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-2xl font-semibold text-gray-900">{employee.name}</h3>
-                        <p className="text-gray-600 mt-1">{employee.email}</p>
+                        <h3 className="text-2xl font-semibold text-gray-900">{employee?.username}</h3>
+                        <p className="text-gray-600 mt-1">{employee?.email}</p>
                     </div>
-                    <button 
-                        onClick={exportPdf} 
+                    <button
+                        onClick={exportPdf}
                         className="px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition-colors font-medium"
                     >
                         Export PDF
@@ -60,17 +70,17 @@ export default function EmployeeDetails() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <div className="text-sm font-medium text-gray-500 mb-2">Department</div>
-                    <div className="text-lg font-semibold text-gray-900">{employee.department}</div>
+                    <div className="text-lg font-semibold text-gray-900">{employee?.address}</div>
                 </div>
-                
+
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <div className="text-sm font-medium text-gray-500 mb-2">Annual Salary</div>
-                    <div className="text-lg font-semibold text-gray-900">${employee.salary.toLocaleString()}</div>
+                    <div className="text-lg font-semibold text-gray-900">${employee?.age?.toLocaleString()}</div>
                 </div>
-                
+
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <div className="text-sm font-medium text-gray-500 mb-2">Employee ID</div>
-                    <div className="text-lg font-semibold text-gray-900">{employee.id}</div>
+                    <div className="text-lg font-semibold text-gray-900"><img  className="w-24 h-24 object-cover" src={`${employee?.profileImage}`} alt="Image" /></div>
                 </div>
             </div>
 
@@ -80,11 +90,11 @@ export default function EmployeeDetails() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <div className="text-sm font-medium text-gray-500 mb-1">Email Address</div>
-                        <div className="text-gray-900">{employee.email}</div>
+                        <div className="text-gray-900">{employee?.email}</div>
                     </div>
                     <div>
                         <div className="text-sm font-medium text-gray-500 mb-1">Department Code</div>
-                        <div className="text-gray-900">{employee.departmentId}</div>
+                        <div className="text-gray-900">{employee?.address}</div>
                     </div>
                 </div>
             </div>
