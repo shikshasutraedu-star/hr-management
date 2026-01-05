@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
             return res1.success
         } catch (error) {
-             alert(error.message) 
+             alert(error.message)
             return false
         }
     }, []);
@@ -102,7 +102,7 @@ formData.append("Password", password);               // optional
 formData.append("Age", age.toString());
 formData.append("Phone", phone);
 formData.append("Address", address);
-formData.append("ProfileImage", file[0]);  // exact DTO name
+formData.append("ProfileImage", file[0]);            // exact DTO name
 
 
       const res = await fetch("http://localhost:5064/api/Auth/register", {
